@@ -3,9 +3,6 @@
 This project is to deploy cloud environment for OpenPOWER-based system with OpenStack and Ceph. It also provides a reference cloud configuration for OpenPOWER.
 
 
-
-[TOC]
-
 ## System Planning
 
 ### Supported OpenPOWER System
