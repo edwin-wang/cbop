@@ -4,8 +4,6 @@ This project is to deploy cloud environment for OpenPOWER-based system with Open
 
 
 
-[TOC]
-
 ## System Planning
 
 ### Supported OpenPOWER System
