@@ -1,0 +1,71 @@
+---
+# Copyright 2016 IBM Corp.
+#
+# Licensed under the Apache License, Version 2.0 (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+#
+#     http://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
+
+- name: Install MySQL/MariaDB in Controller
+  apt: name={{ item }}
+       state=present
+  with_flattened:
+    - mariadb-server
+    - python-pymysql
+
+- name: Copy config file for MySQL/MariaDB
+  template: src={{ item.src }}
+            dest={{ item.dest }}
+            owner=root
+            group=root
+            mode=0644
+  with_items:
+    - { src: 'mysqld_openstack.cnf', dest: '/etc/mysql/conf.d/mysqld_openstack.cnf'}
+    - { src: 'mariadb.cnf', dest: '/etc/mysql/mariadb.cnf'}
+
+- name: Restart Mysql/MariaDB service
+  service: name=mysql
+           state=restarted
+
+- name: Enable MySQL/MariaDB service autostart
+  service: name=mysql
+           state=started
+           enabled=yes
+
+- name: Install RabbitMQ in Controller
+  apt: name=rabbitmq-server
+       state=present
+
+- name: Add OpenStack user for RabbitMQ
+  rabbitmq_user: user=openstack
+                 password={{ RABBIT_PASS }}
+                 force=yes
+                 vhost=/
+                 configure_priv=.*
+                 read_priv=.*
+                 write_priv=.*
+
+- name: Install Memcached in Controller
+  apt: name={{ item }}
+       state=present
+  with_flattened:
+    - memcached
+    - python-memcache
+
+- name: Copy config file for Memcached
+  template: src=memcached.conf
+            dest=/etc/memcached.conf
+            owner=root
+            group=root
+            mode=0644
+
+- name: Restart memcached
+  service: name=memcached
+           state=restarted

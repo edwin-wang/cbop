@@ -1,0 +1,81 @@
+---
+# Copyright 2016 IBM Corp.
+#
+# Licensed under the Apache License, Version 2.0 (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+#
+#     http://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
+
+- name: Create nova database
+  mysql_db: name={{ item }}
+            state=present
+  with_items:
+    - nova_api
+    - nova
+
+- name: Create nova_api database user
+  mysql_user: name=nova
+              password={{ KEYSTONE_DBPASS }}
+              priv=nova_api.*:ALL
+              host={{ item }}
+              state=present
+              append_privs=yes
+  with_flattened:
+    - "{{ DB_HOST }}"
+
+- name: Create nova database user
+  mysql_user: name=nova
+              password={{ NOVA_DBPASS }}
+              priv=nova.*:ALL
+              host={{ item }}
+              state=present
+              append_privs=yes
+  with_flattened:
+    - "{{ DB_HOST }}"
+
+- name: Copy nova.sh to create user and entity
+  template: src=nova.sh
+            dest={{ BASE_DIR }}/nova.sh
+            owner=root
+            group=root
+            mode=0644
+
+- name: Run nova.sh
+  shell: bash {{ BASE_DIR }}/nova.sh
+
+- name: Install nova packages
+  apt: name={{ item }}
+       state=present
+  with_flattened:
+    - "{{ nova_packages }}"
+
+- name: Copy config file for nova service
+  template: src=nova.conf
+            dest=/etc/nova/nova.conf
+            owner=root
+            group=root
+            mode=0644
+
+- name: Populate nova_api service database
+  shell: su -s /bin/sh -c "nova-manage api_db sync" nova
+# ignore_errors: True
+
+- name: Populate nova service database
+  shell: su -s /bin/sh -c "nova-manage db sync" nova
+# ignore_errors: True
+
+- name: Restart nova services
+  service: name={{ item }}
+           state=restarted
+  with_items:
+    - nova-api
+    - nova-consoleauth
+    - nova-conductor
+    - nova-novncproxy

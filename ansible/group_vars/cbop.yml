@@ -1,0 +1,47 @@
+---
+# Copyright 2016 IBM Corp.
+#
+# Licensed under the Apache License, Version 2.0 (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+#
+#     http://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
+
+INTERNAL_INTERFACE: eth0
+INTERNAL_IP: "{{ hostvars[inventory_hostname]['ansible_eth0']['ipv4']['address'] }}"
+INTERNET_INTERFACE: en0
+INTERNET_IP: "{{ hostvars[inventory_hostname]['ansible_en0']['ipv4']['address'] }}"
+CONTROLLER: controller
+CONTROLLER_IP: "{{ INTERNAL_IP }}"
+
+REPO_HOSTNAME: controller
+
+NOVNCPROXY_BASE_URL_IP: "{{ INTERNET_IP }}"
+
+ADMIN_PASS: nova
+DEMO_PASS: nova
+
+DBPASS: nova
+
+RABBIT_USER: openstack
+RABBIT_PASS: nova
+KEYSTONE_DBPASS: "{{ DBPASS }}"
+KEYSTONE_PASS: "{{ ADMIN_PASS }}"
+GLANCE_DBPASS: "{{ DBPASS }}"
+GLANCE_PASS: "{{ ADMIN_PASS }}"
+NOVA_DBPASS: "{{ DBPASS }}"
+NOVA_PASS: "{{ ADMIN_PASS }}"
+NEUTRON_DBPASS: "{{ DBPASS }}"
+NEUTRON_PASS: "{{ ADMIN_PASS }}"
+CINDER_DBPASS: "{{ DBPASS }}"
+CINDER_PASS: "{{ ADMIN_PASS }}"
+
+DB_HOST:
+  - ["localhost", "127.0.0.1", "%"]
+BASE_DIR: /opt/cbop

@@ -1,0 +1,1 @@
+deb [trusted=yes] http://{{ REPO_HOSTNAME }}:8081/ubuntu cbop main

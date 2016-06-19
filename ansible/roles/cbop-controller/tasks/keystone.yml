@@ -1,0 +1,101 @@
+---
+# Copyright 2016 IBM Corp.
+#
+# Licensed under the Apache License, Version 2.0 (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+#
+#     http://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
+
+- name: Create keystone database
+  mysql_db: name=keystone
+            state=present
+
+- name: Create keystone database user
+  mysql_user: name=keystone
+              password={{ KEYSTONE_DBPASS }}
+              priv=keystone.*:ALL
+              host={{ item }}
+              state=present
+              append_privs=yes
+  with_flattened:
+    - "{{ DB_HOST }}"
+
+- name: Disable keystone service from starting automatically
+  shell: echo "manual" > /etc/init/keystone.override
+
+- name: Install keystone packages
+  apt: name={{ item }}
+       state=present
+  with_items:
+    - "{{ keystone_packages }}"
+
+- name: Copy config file for keystone service
+  template: src=keystone.conf
+            dest=/etc/keystone/keystone.conf
+            owner=root
+            group=root
+            mode=0644
+
+- name: Populate keystone service database
+  shell: su -s /bin/sh -c "keystone-manage db_sync" keystone
+# ignore_errors: True
+
+- name: Initialize Fernet keys
+  shell: keystone-manage fernet_setup --keystone-user keystone --keystone-group keystone
+
+- name: Copy config file for apache2 and wsgi-keystone
+  template: src={{ item.src }}
+            dest={{ item.dest }}
+            owner=root
+            group=root
+            mode=0644
+  with_items:
+    - { src: 'apache2.conf', dest: '/etc/apache2/apache2.conf' }
+    - { src: 'wsgi-keystone.conf', dest: '/etc/apache2/sites-available/wsgi-keystone.conf' }
+
+- name: Enable wsgi-keystone in apache2
+  file: src=/etc/apache2/sites-available/wsgi-keystone.conf
+        path=/etc/apache2/sites-enabled/wsgi-keystone.conf
+        state=link
+
+- name: Stop keystone service
+  service: name=keystone
+           state=stopped
+
+- name: Restart apache2 service for keystone
+  service: name=apache2
+           state=restarted
+
+- name: Remove SQLite file
+  file: path=/var/lib/keystone/keystone.db
+        state=absent
+
+- name: Copy keystone.sh to create user and entity
+  template: src=keystone.sh
+            dest={{ BASE_DIR }}/keystone.sh
+            owner=root
+            group=root
+            mode=0644
+
+- name: Run keystone.sh
+  shell: bash {{ BASE_DIR }}/keystone.sh
+
+- name: Verification for keystone
+  shell: "{{ item }}"
+  with_flattened:
+    - "openstack --os-auth-url http://{{ CONTROLLER }}:35357/v3 \
+    --os-project-domain-name default --os-user-domain-name default \
+    --os-project-name admin --os-username admin --os-password {{ ADMIN_PASS }} \
+    token issue"
+    - "openstack --os-auth-url http://controller:5000/v3 \
+    --os-project-domain-name default --os-user-domain-name default \
+    --os-project-name demo --os-username demo --os-password {{ DEMO_PASS }} \
+    token issue"
+
