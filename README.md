@@ -165,10 +165,10 @@ In this guide, the external/public network is 192.168.0.0/24. The internal/priva
 2. Clone the repository.
 
    ```shell
-   git clone https://github.com/CBO
+   git clone https://github.com/edwin-wang/cbop
    ```
 
-3. Modify CBO/ansible/ansible_hosts and set root password.
+3. Modify cbop/ansible/ansible_hosts and set root password.
 
    In ansible_hosts, use the IP addresses of external/public network.
 
@@ -200,7 +200,7 @@ In this guide, the external/public network is 192.168.0.0/24. The internal/priva
 5. Deploy controller node.
 
    ```shell
-   cd CBO/ansible
+   cd cbop/ansible
    ansible-playbook -i ansible_hosts cbop-compute.yml
    ```
 
