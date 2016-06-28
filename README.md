@@ -77,7 +77,6 @@ In this guide, the external/public network is 192.168.0.0/24. The internal/priva
    sudo passwd root
    ```
 
-   sudo passwd root
 
 5. Install openssh-server.
 
@@ -118,38 +117,38 @@ In this guide, the external/public network is 192.168.0.0/24. The internal/priva
    SUBSYSTEM=="net", ACTION=="add", ATTR{address}=="MAC ADDRESS", NAME="eth0"
    ```
 
-   Replace **MAC ADDRESS** with network interface MAC address.
+   Replace `MAC ADDRESS` with network interface MAC address.
 
 10. Set IP address for en0 and eth0 by editing /etc/network/interfaces.
 
-    > auto en0
-    > iface en0 inet static
-    > address 192.168.1.101
-    > netmask 255.255.255.0
-    > gateway 192.168.1.1
-    > dns-nameserver 9.0.148.50
-    >
-    > auto eth0
-    > iface eth0 inet static
-    > address 172.0.0.11
-    > netmask 255.255.255.0
+   > auto en0
+   > iface en0 inet static
+   > address 192.168.1.101
+   > netmask 255.255.255.0
+   > gateway 192.168.1.1
+   > dns-nameserver 9.0.148.50
+   >
+   > auto eth0
+   > iface eth0 inet static
+   > address 172.0.0.11
+   > netmask 255.255.255.0
 
 11. Set host name in /etc/hostname and write all node entities in /etc/hosts.
 
-    After set host name in /etc/hostname, run
+   After set host name in /etc/hostname, run
 
-    ```shell
-    sudo hostname -F /etc/hostname
-    ```
+```shell
+   sudo hostname -F /etc/hostname
+```
 
-    Set node entities in /etc/hosts with IP addresses for internal/private network, for example
+   Set node entities in /etc/hosts with IP addresses for internal/private network, for example
 
-    > \# OpenPOWER OpenStack cluster
-    > 172.0.0.11      op-controller	**controller**
-    > 172.0.0.21      op-compute-01
-    > 172.0.0.22      op-compute-02
+   > \# OpenPOWER OpenStack cluster
+   > 172.0.0.11      op-controller	**controller**
+   > 172.0.0.21      op-compute-01
+   > 172.0.0.22      op-compute-02
 
-    Notice that leave the **controller** at the end of the controller line.
+   Notice that leave the `controller` at the end of the controller line.
 
 12. Reboot system.
 
@@ -194,17 +193,16 @@ In this guide, the external/public network is 192.168.0.0/24. The internal/priva
    op-compute-01 ansible_ssh_host=192.168.1.102 ENABLE_REPO=False
    op-compute-02 ansible_ssh_host=192.168.1.102 ENABLE_REPO=False
    ```
+   Replace `PASSWORD` with your root password. Change IP address and hostname in 'chop-repo', 'cbop-controller' and 'cbop-compute' sections as well.
 
-4. ​
-
-5. Deploy controller node.
+4. Deploy controller node.
 
    ```shell
    cd cbop/ansible
    ansible-playbook -i ansible_hosts cbop-compute.yml
    ```
 
-6. Deploy compute node.
+5. Deploy compute node.
 
    ```shell
    ansible-playbook -i ansible_hosts cbop-compute.yml
@@ -212,7 +210,7 @@ In this guide, the external/public network is 192.168.0.0/24. The internal/priva
 
    Controller node and compute node can be deployed parallelly.
 
-7. Wait untill deployment finishes. The dashboard is on the controller node. It can be access via browse.
+6. Wait untill deployment finishes. The dashboard is on the controller node. It can be access via browse.
 
 
    > http://***CONTROLLER***/horizon
