@@ -9,7 +9,7 @@ This project is to deploy cloud environment for OpenPOWER-based system with Open
 
 Most scripts in repository are written in YAML for ansible. The original intention is for all OpenPOWER systems.
 
-At present, this configuration has been verified on Zoom RedPOWER C210, Tyan Habanero (TN71-BP012), IBM Firestone.
+At present, this configuration has been verified on Zoom RedPOWER C210, Tyan Habanero (TN71-BP012), IBM Habanero (MTM) Firestone (MTM8335).
 
 ### Operation System
 
@@ -78,35 +78,35 @@ In this guide, the external/public network is 192.168.0.0/24. The internal/priva
    ```
 
 
-5. Install openssh-server.
+1. Install openssh-server.
 
    ```shell
    sudo apt install openssh-server -y
    ```
 
-6. Enable ssh login for root by edit /etc/ssh/sshd_config. Change PermitRootLogin to Yes.
+2. Enable ssh login for root by edit /etc/ssh/sshd_config. Change PermitRootLogin to Yes.
 
    ```shell
    PermitRootLogin yes
    ```
 
-7. Restart ssh service
+3. Restart ssh service
 
    ```shell
    sudo service ssh restart
    ```
 
-8. Install python 2.7.
+4. Install python 2.7.
 
    ```shell
    sudo apt install python -y
    ```
 
-9. Set network interface name manually.
+5. Set network interface name manually.
 
-   External/public network interface: en0
+   External/public network interface: `en0`
 
-   Internal/private network interface: eth0
+   Internal/private network interface: `eth0`
 
    Map network interface with defined name by edit /etc/udev/rules.d/70-network.rules.
 
@@ -119,21 +119,21 @@ In this guide, the external/public network is 192.168.0.0/24. The internal/priva
 
    Replace `MAC ADDRESS` with network interface MAC address.
 
-10. Set IP address for en0 and eth0 by editing /etc/network/interfaces.
+6. Set IP address for en0 and eth0 by editing /etc/network/interfaces.
 
    > auto en0
    > iface en0 inet static
    > address 192.168.1.101
    > netmask 255.255.255.0
    > gateway 192.168.1.1
-   > dns-nameserver 9.0.148.50
+   > dns-nameserver 192.168.1.1
    >
    > auto eth0
    > iface eth0 inet static
    > address 172.0.0.11
    > netmask 255.255.255.0
 
-11. Set host name in /etc/hostname and write all node entities in /etc/hosts.
+7. Set host name in /etc/hostname and write all node entities in /etc/hosts.
 
    After set host name in /etc/hostname, run
 
@@ -199,7 +199,7 @@ In this guide, the external/public network is 192.168.0.0/24. The internal/priva
 
    ```shell
    cd cbop/ansible
-   ansible-playbook -i ansible_hosts cbop-compute.yml
+   ansible-playbook -i ansible_hosts cbop-controller.yml
    ```
 
 5. Deploy compute node.
