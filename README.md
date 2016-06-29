@@ -195,14 +195,16 @@ In this guide, the external/public network is 192.168.0.0/24. The internal/priva
    ```
    Replace `PASSWORD` with your root password. Change IP address and hostname in 'chop-repo', 'cbop-controller' and 'cbop-compute' sections as well.
 
-4. Deploy controller node.
+4. Modify variables for deployment by editing group_vars/cbop.yml.
+
+5. Deploy controller node.
 
    ```shell
    cd cbop/ansible
    ansible-playbook -i ansible_hosts cbop-controller.yml
    ```
 
-5. Deploy compute node.
+6. Deploy compute node.
 
    ```shell
    ansible-playbook -i ansible_hosts cbop-compute.yml
@@ -210,13 +212,15 @@ In this guide, the external/public network is 192.168.0.0/24. The internal/priva
 
    Controller node and compute node can be deployed parallelly.
 
-6. Wait untill deployment finishes. The dashboard is on the controller node. It can be access via browse.
-
+7. Wait untill deployment finishes. The dashboard is on the controller node. It can be access via browse.
 
    > http://***CONTROLLER***/horizon
 
+   Replace `CONTROLLER` with your controller external IP.
+   Default username: `admin`
+   Default password: `nova`
 
-   Replace CONTROLLER with your controller external IP.
+
 
 
 
