@@ -84,7 +84,7 @@ In this guide, the external/public network is 192.168.0.0/24. The internal/priva
    sudo apt install openssh-server -y
    ```
 
-2. Enable ssh login for root by edit /etc/ssh/sshd_config. Change PermitRootLogin to Yes.
+2. Enable ssh login for root by edit /etc/ssh/sshd_config. Change `PermitRootLogin` to `Yes`.
 
    ```shell
    PermitRootLogin yes
