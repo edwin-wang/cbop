@@ -9,7 +9,7 @@ This project is to deploy cloud environment for OpenPOWER-based system with Open
 
 Most scripts in repository are written in YAML for ansible. The original intention is for all OpenPOWER systems.
 
-At present, this configuration has been verified on Zoom RedPOWER C210, Tyan Habanero (TN71-BP012), IBM Habanero (MTM) Firestone (MTM8335).
+At present, this configuration has been verified on Zoom RedPOWER C210, Tyan Habanero (TN71-BP012), IBM Habanero (MTM8348), IBM Firestone (MTM8335).
 
 ### Operation System
 
