@@ -9,7 +9,7 @@ This project is to deploy cloud environment for OpenPOWER-based system with Open
 
 Most scripts in repository are written in YAML for ansible. The original intention is for all OpenPOWER systems.
 
-At present, this configuration has been verified on Zoom RedPOWER C210, Tyan Habanero (TN71-BP012), IBM Habanero (MTM8348), IBM Firestone (MTM8335).
+At present, this configuration has been verified on Zoom RedPOWER C210, Tyan TN71-BP012, IBM MTM8348, IBM MTM8335.
 
 ### Operation System
 
@@ -77,32 +77,31 @@ In this guide, the external/public network is 192.168.0.0/24. The internal/priva
    sudo passwd root
    ```
 
-
-1. Install openssh-server.
+5. Install openssh-server.
 
    ```shell
    sudo apt install openssh-server -y
    ```
 
-2. Enable ssh login for root by edit /etc/ssh/sshd_config. Change `PermitRootLogin` to `Yes`.
+6. Enable ssh login for root by edit /etc/ssh/sshd_config. Change `PermitRootLogin` to `Yes`.
 
    ```shell
    PermitRootLogin yes
    ```
 
-3. Restart ssh service
+7. Restart ssh service
 
    ```shell
    sudo service ssh restart
    ```
 
-4. Install python 2.7.
+8. Install python 2.7.
 
    ```shell
    sudo apt install python -y
    ```
 
-5. Set network interface name manually.
+9. Set network interface name manually.
 
    External/public network interface: `en0`
 
@@ -119,7 +118,7 @@ In this guide, the external/public network is 192.168.0.0/24. The internal/priva
 
    Replace `MAC ADDRESS` with network interface MAC address.
 
-6. Set IP address for en0 and eth0 by editing /etc/network/interfaces.
+10. Set IP address for en0 and eth0 by editing /etc/network/interfaces.
 
    > auto en0
    > iface en0 inet static
@@ -133,13 +132,13 @@ In this guide, the external/public network is 192.168.0.0/24. The internal/priva
    > address 172.0.0.11
    > netmask 255.255.255.0
 
-7. Set host name in /etc/hostname and write all node entities in /etc/hosts.
+11. Set host name in /etc/hostname and write all node entities in /etc/hosts.
 
    After set host name in /etc/hostname, run
 
-```shell
+   ```shell
    sudo hostname -F /etc/hostname
-```
+   ```
 
    Set node entities in /etc/hosts with IP addresses for internal/private network, for example
 
@@ -155,10 +154,10 @@ In this guide, the external/public network is 192.168.0.0/24. The internal/priva
 
 ### Deployment System
 
-1. Install ansible.
+1. Install ansible and git.
 
    ```shell
-   sudo apt install ansible -y
+   sudo apt install ansible git -y
    ```
 
 2. Clone the repository.
@@ -184,7 +183,7 @@ In this guide, the external/public network is 192.168.0.0/24. The internal/priva
    cbop-compute
 
    [cbop-repo]
-   redpower-sh-01 ansible_ssh_host=192.168.1.101
+   op-controller ansible_ssh_host=192.168.1.101
 
    [cbop-controller]
    op-controller ansible_ssh_host=192.168.1.101 ENABLE_REPO=False
@@ -195,16 +194,28 @@ In this guide, the external/public network is 192.168.0.0/24. The internal/priva
    ```
    Replace `PASSWORD` with your root password. Change IP address and hostname in 'chop-repo', 'cbop-controller' and 'cbop-compute' sections as well.
 
-4. Modify variables for deployment by editing group_vars/cbop.yml.
+4. Ensure ssh connection between deployment system and each nodes.
 
-5. Deploy controller node.
+   ```shell
+   ssh-keygen
+   ssh-copy-id NODE
+   ```
+   Replace `NODE` to each node name.
+
+5. Modify ansible/group_vars/cbop.yml for customizaton. 
+
+   Change `NOVNCPROXY_BASE_URL_IP` to external/public IP address of controller node.
+
+6. Modify variables for deployment by editing group_vars/cbop.yml.
+
+7. Deploy controller node.
 
    ```shell
    cd cbop/ansible
    ansible-playbook -i ansible_hosts cbop-controller.yml
    ```
 
-6. Deploy compute node.
+8. Deploy compute node.
 
    ```shell
    ansible-playbook -i ansible_hosts cbop-compute.yml
@@ -212,7 +223,7 @@ In this guide, the external/public network is 192.168.0.0/24. The internal/priva
 
    Controller node and compute node can be deployed parallelly.
 
-7. Wait untill deployment finishes. The dashboard is on the controller node. It can be access via browse.
+9. Wait untill deployment finishes. The dashboard is on the controller node. It can be access via browse.
 
    > http://***CONTROLLER***/horizon
 
