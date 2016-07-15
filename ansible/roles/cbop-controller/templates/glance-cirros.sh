@@ -23,10 +23,10 @@ wget http://download.cirros-cloud.net/daily/20150923/cirros-d150923-ppc64le-init
 fi
 
 openstack image create "cirros-initramfs" \
-  --disk-format aki --container-format aki --public \
+  --disk-format aki --container-format ari --public \
   --file ./cirros-d150923-ppc64le-initramfs
 # openstack image create "cirros-kernel" \
-#   --disk-format ari --container-format ari --public \
+#   --disk-format ari --container-format aki --public \
 #   --file ./cirros-d150923-ppc64le-kernel
 # openstack image create "cirros-disk" \
 #   --disk-format ami --container-format ami --public \
