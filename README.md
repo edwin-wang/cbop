@@ -50,7 +50,7 @@ The networking in this deployment is based on LinuxBridge but OVS is also suppor
 
 In this reference configuration, each node has to be configurated with 2 network interfaces. One is for public network; anther is for private network.
 
-![Network Figure](images/network.png)
+![Network Figure](https://raw.githubusercontent.com/edwin-wang/cbop-image/master/network.png)
 
 
 
