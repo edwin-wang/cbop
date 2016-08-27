@@ -19,6 +19,23 @@
 - name: Add repository key
   apt_key: keyserver=keyserver.ubuntu.com id=0xF1656F24C74CD1D8
 
+
+- name: Install MariaDB repository for Ubuntu Trusty
+  apt_repository: repo='deb http://mirrors.tuna.tsinghua.edu.cn/mariadb/repo/10.1/ubuntu trusty main' state=present
+  when: ansible_distribution == 'Ubuntu' and ansible_distribution_release == 'trusty'
+
+- name: Add repository key for Ubuntu Trusty
+  apt_key: keyserver=keyserver.ubuntu.com id=0xcbcb082a1bb943db
+  when: ansible_distribution == 'Ubuntu' and ansible_distribution_release == 'trusty'
+
+- name: Install MariaDB repository for Ubuntu Xenial
+  apt_repository: repo='deb http://mirrors.tuna.tsinghua.edu.cn/mariadb/repo/10.1/ubuntu xenial main' state=present
+  when: ansible_distribution == 'Ubuntu' and ansible_distribution_release == 'xenial'
+
+- name: Add repository key for Ubuntu Xenial
+  apt_key: keyserver=keyserver.ubuntu.com id=0xF1656F24C74CD1D8
+  when: ansible_distribution == 'Ubuntu' and ansible_distribution_release == 'xenial'
+
 - name: Install MySQL/MariaDB in Controller
   apt: name={{ item }}
        state=present

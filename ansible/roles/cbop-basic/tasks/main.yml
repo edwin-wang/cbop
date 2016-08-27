@@ -40,10 +40,20 @@
             mode=0644
   when: ENABLE_REPO == True
 
+- name: Install package for apt-add-repository
+  apt: name=software-properties-common
+       state=present
+  when: ansible_distribution == 'Ubuntu' and ansible_distribution_release == 'trusty'
+
+- name: Add Ubuntu Cloud Archive for OpenStack Mitaka
+  command: apt-add-repository -y cloud-archive:mitaka
+  when: ansible_distribution == 'Ubuntu' and ansible_distribution_release == 'trusty'
+
 - name: Update apt repo
   apt: update_cache=yes
 
 - name: Install packages
-  apt: name={{ item }} state=present
+  apt: name={{ item }}
+       state=present
   with_flattened:
     - "{{ base_packages }}"
