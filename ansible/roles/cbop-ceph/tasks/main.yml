@@ -37,7 +37,7 @@
          chdir={{ BASE_DIR }}/ceph-deploy
 
 - name: Create keyring
-  shell: ceph-deploy new {{ CEPH_MON }}
+  shell: /bin/bash -c "ceph-deploy new {{ CEPH_MON }}"
          chdir={{ BASE_DIR }}/ceph-deploy
 
 - name: Copy config files
@@ -50,7 +50,7 @@
     - "{{ ceph_files }}"
 
 - name: Deploy ceph-mon with optimized config file
-  shell: ceph-deploy --overwrite-conf mon create-initial
+  shell: /bin/bash -c "ceph-deploy --overwrite-conf mon create-initial"
          chdir={{ BASE_DIR }}/ceph-deploy
 
 - name: Deploy ceph-osd
