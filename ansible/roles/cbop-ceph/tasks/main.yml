@@ -1,0 +1,72 @@
+---
+# Copyright 2016 IBM Corp.
+#
+# Licensed under the Apache License, Version 2.0 (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+#
+#     http://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
+
+- name: Deploy Ceph cluster for OpenPOWER
+  debug: msg='Deploy ceph cluster'
+
+- name: Update apt repo
+  apt: update_cache=yes
+
+- name: Install ceph-deploy package
+  apt: name={{ item }}
+       state=present
+  with_flattened:
+    - "{{ packages }}"
+
+- name: Create {{ BASE_DIR }} folder
+  file: dest={{ BASE_DIR }}/ceph-deploy
+        state=directory
+        owner=root
+        group=root
+        mode=0644
+
+- name: Install ceph common packages for all ceph nodes
+  shell: /bin/bash -c "ceph-deploy install {{ CEPH_NODES }}"
+         chdir={{ BASE_DIR }}/ceph-deploy
+
+- name: Create keyring
+  shell: ceph-deploy new {{ CEPH_MON }}
+         chdir={{ BASE_DIR }}/ceph-deploy
+
+- name: Copy config files
+  template: src={{ item }}
+            dest={{ BASE_DIR }}/ceph-deploy/{{ item }}
+            owner=root
+            group=root
+            mode=0644
+  with_flattened:
+    - "{{ ceph_files }}"
+
+- name: Deploy ceph-mon with optimized config file
+  shell: ceph-deploy --overwrite-conf mon create-initial
+         chdir={{ BASE_DIR }}/ceph-deploy
+
+- name: Deploy ceph-osd
+  shell: /bin/bash -c "ceph-deploy osd create {{ CEPH_OSD }} --zap-disk"
+         chdir={{ BASE_DIR }}/ceph-deploy
+
+- name: Deploy ceph-admin
+  shell: /bin/bash -c "ceph-deploy admin {{ CEPH_ADMIN }}"
+         chdir={{ BASE_DIR }}/ceph-deploy
+
+# setup ceph metadata node
+# - name: Deploy ceph-mds
+#   shell: /bin/bash -c "ceph-deploy mds create {{ CEPH_MDS }}"
+#          chdir={{ BASE_DIR }}/ceph-deploy
+
+# setup ceph object gateway
+# - name: Deploy ceph-rgw
+#   shell: /bin/bash -c "ceph-deploy rgw create {{ CEPH_RGW }}"
+#          chdir={{ BASE_DIR }}/ceph-deploy

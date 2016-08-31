@@ -13,6 +13,10 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+
+BASE_DIR: /opt/cbop
+
+# Variables for OpenStack
 INTERNAL_INTERFACE: eth0
 INTERNAL_IP: "{{ hostvars[inventory_hostname]['ansible_eth0']['ipv4']['address'] }}"
 INTERNET_INTERFACE: en0
@@ -44,4 +48,13 @@ CINDER_PASS: "{{ ADMIN_PASS }}"
 
 DB_HOST:
   - ["localhost", "127.0.0.1", "%"]
-BASE_DIR: /opt/cbop
+
+# Variables for Ceph
+CEPH_PUBLIC: $CEPH_PUBLIC$
+CEPH_CLUSTER: $CEPH_CLUSTER$
+CEPH_NODES: $CEPH_NODES$
+CEPH_MON: $CEPH_MON$
+CEPH_OSD: $CEPH_OSD$
+CEPH_ADMIN: $CEPH_ADMIN$
+CEPH_MDS: $CEPH_MDS$
+CEPH_RGW: $CEPH_RGW$
