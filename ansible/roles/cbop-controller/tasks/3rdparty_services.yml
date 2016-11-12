@@ -13,13 +13,6 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-- name: Install MariaDB repository
-  apt_repository: repo='deb http://mirrors.tuna.tsinghua.edu.cn/mariadb/repo/10.1/ubuntu xenial main' state=present
-
-- name: Add repository key
-  apt_key: keyserver=keyserver.ubuntu.com id=0xF1656F24C74CD1D8
-
-
 - name: Install MariaDB repository for Ubuntu Trusty
   apt_repository: repo='deb http://mirrors.tuna.tsinghua.edu.cn/mariadb/repo/10.1/ubuntu trusty main' state=present
   when: ansible_distribution == 'Ubuntu' and ansible_distribution_release == 'trusty'
